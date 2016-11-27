@@ -7,6 +7,18 @@ from flask_wtf import Form
 from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 from flask_sqlalchemy import SQLAlchemy
+import os
+
+app = Flask(__name__)
+manager = Manager(app)
+bootstrap = Bootstrap(app)
+moment = Moment(app)
+app.config['SECRET_KEY'] = 'hard to guess string'
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+db = SQLAlchemy(app)
 
 class NameForm(Form):
     name = StringField('What is your name?', validators=[Required()])
@@ -28,15 +40,6 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>'%self.username
 
-
-app = Flask(__name__)
-manager = Manager(app)
-bootstrap = Bootstrap(app)
-moment = Moment(app)
-app.config['SECRET_KEY'] = 'hard to guess string'
-app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///' + os.path.join(basedir, 'data.sqlite')
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-db = SQLAlchemy(app)
 
 @app.route('/', methods=['GET','POST'])
 def index():
